@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.DefaultListModel;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
@@ -17,12 +18,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	
     private int selecao=0; //quantidade de contatos selecionados
     private ConversationWindow conversationWindow;
+    private DefaultListModel contatosModel; //Lista de contatos que terei no meu JList
+    //TODO: depois de ter o controle de quem entra/sai do chat, esse cara de cima precisara ser setado
+    //muitas vezes, para depois setar o model da list 
+    //EX: jList1.setModel(DefaultListModel);
 	
     /**
-     * construtor da classe.
+     * Construtor da classe.
      */
     public TelaPrincipal(String nome) {
         initComponents();
+        this.inicializa();
         this.setLocationRelativeTo(null); 
         this.lstContatos.addMouseListener(this.iniciaChat()); 
         this.lstContatos.addListSelectionListener(new ListSelectionListener() {
@@ -161,19 +167,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
     		//recebe um evento de mouse
             public void mouseClicked(MouseEvent e){
               if(e.getClickCount() == 2){ //se forem cliques duplos
-            	  	//pego o index do contato clicado
+                    	//pego o index do contato clicado
             	  	int indexContato = lstContatos.locationToIndex(e.getPoint());
             	  	//e atraves desse index eu verifico a String relativa ao nome do contato
-            	  	String nomeContato = retornaContatoList(indexContato);	                
+            	  	String nomeContato = retornaContatoList(indexContato);	         
+                        String contato[] = new String[]{nomeContato};
                         if(conversationWindow==null){//se eu não tiver criado a janela ainda
-                            conversationWindow = new ConversationWindow(1, lstContatos.getSelectedValue().toString());
-                            /*Configurar antes:
-                             * 1.Como informações serão passadas
-                             * 2.Criar simples troca de mensagens
-                             */
+                            conversationWindow = new ConversationWindow(1, contato);
+                         }
+                        else{
+                            conversationWindow.adicionaConversa(1, contato);
                         }
+                    conversationWindow.setVisible(true);
               }
-            }
+                }
           };
     }
     
@@ -182,7 +189,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
      * @param indiceContato �ndice do contato que desejo saber o nome
      * @return nomeContato Nome do contato desejado.
      */
-    public String retornaContatoList(int indiceContato){
+    protected String retornaContatoList(int indiceContato){
     	String nomeContato;
     	nomeContato=lstContatos.getModel().getElementAt(indiceContato).toString();
     	return nomeContato;
@@ -193,19 +200,72 @@ public class TelaPrincipal extends javax.swing.JFrame {
      * @param quantidadeContatos Quantidade de contatos que selecionei.
      * @return MouseAdapter Um evento de mouse
      */
-    public void iniciaChatMultiplo(){
-    	//�ndices dos contatos
-		int[] indices = lstContatos.getSelectedIndices();
-        /* A partir daqui, eu teoricamente abriria N forms,
-         * cada um para um chat.
-         * Para exemplificar, mandarei para um jOptionPane
-         */
-		String contatos = "INICIE A CONVERSA COM :\n";
-        for(int i = 0; i < indices.length; i++)
-        	contatos += " "+retornaContatoList(indices[i]);
-        JOptionPane.showMessageDialog(null, contatos);
+    protected void iniciaChatMultiplo(){
+    	//Indices dos contatos
+        int[] indices = lstContatos.getSelectedIndices();
+        //Vetor com nomes dos contatos
+        String nomeContatos[]=new String[indices.length];
+        for(int i=0;i<indices.length;i++){
+            //Vou pegando nome a nome dos contatos 
+            nomeContatos[i]=retornaContatoList(indices[i]);
+            //E desabilito a janela do contato
+            
+        }   
+        if(conversationWindow==null){//se eu não tiver criado a janela ainda
+            conversationWindow = new ConversationWindow(indices.length, nomeContatos);
+        }
+        else{
+            conversationWindow.adicionaConversa(indices.length, nomeContatos);
+        }
+        conversationWindow.setVisible(true);
         //depois de executar a funcionalidade, "zero" a quantidade de elementos selecionados
-		this.selecao=0;
-		this.lstContatos.clearSelection();
+	this.selecao=0;
+	this.lstContatos.clearSelection();
     }
+
+    /**
+     * Remove algum contato da lista.
+     * @param idContato 
+     *          Id do contato a ser removido.
+     */
+    protected void removeContato(int idContato){
+        //TODO: codigo nas 2 linhas abaixo NAO SERA NECESSARIO quando o contatosModel for setado de acordo com quem esta online
+        //Fazendo meu DefaultListModel receber os caras que ja existem na lista
+        for(int i=0;i<lstContatos.getModel().getSize();i++){
+            this.contatosModel.addElement(this.lstContatos.getModel().getElementAt(i));
+        }
+        
+        //Removendo o contato que tenho
+        this.contatosModel.remove(idContato);
+        
+        //Atualizo a lista com o que tenho
+        lstContatos.setModel(this.contatosModel);
+    }
+    
+    /**
+     * Adiciona contato no JList.
+     * @param nomeContato 
+     *          Nome do contato a ser adicionado.
+     */
+    protected void adicionaContato(String nomeContato){
+        //TODO: codigo nas 2 linhas abaixo NAO SERA NECESSARIO quando o contatosModel for setado de acordo com quem esta online
+        //Fazendo meu DefaultListModel receber os caras que ja existem na lista
+        for(int i=0;i<lstContatos.getModel().getSize();i++){
+            this.contatosModel.addElement(this.lstContatos.getModel().getElementAt(i));
+        }
+        //Adiciono o contato que desejo, na ultima posicao
+        this.contatosModel.add(lstContatos.getModel().getSize(), nomeContato);
+        
+        //Atualizo a lista com o que tenho
+        lstContatos.setModel(this.contatosModel);
+    }
+    
+    /**
+     * Inicializa as variaveis que existem.
+     */ 
+    protected void inicializa(){
+        this.contatosModel=new DefaultListModel();
+    }
+    
+    //TODO: os metodos de adicionar e remover devem ser setados, com o tempo, para receberem o ip do contato
 }
