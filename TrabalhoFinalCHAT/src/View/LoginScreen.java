@@ -15,6 +15,8 @@ public class LoginScreen extends javax.swing.JFrame {
     public LoginScreen() {
         initComponents();
         this.setLocationRelativeTo(null); 
+        //bloqueando o resinzing do form
+        setResizable(false);
     }
 
     

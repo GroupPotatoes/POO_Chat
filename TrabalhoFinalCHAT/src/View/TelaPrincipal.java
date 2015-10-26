@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
@@ -14,7 +15,7 @@ import javax.swing.event.ListSelectionListener;
  * Classe da janela principal do chat.
  * @author Maiara Rodrigues
  */
-public class TelaPrincipal extends javax.swing.JFrame {
+public class TelaPrincipal extends javax.swing.JFrame { 
 	
     private int selecao=0; //quantidade de contatos selecionados
     private ConversationWindow conversationWindow;
@@ -31,18 +32,26 @@ public class TelaPrincipal extends javax.swing.JFrame {
         this.inicializa();
         this.setLocationRelativeTo(null); 
         this.lstContatos.addMouseListener(this.iniciaChat()); 
+        this.btnMensagemMultipla.setVisible(false);
+        this.txtMensagemMultipla.setVisible(false);
         this.lstContatos.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				selecao = lstContatos.getSelectedIndices().length;
-				if(selecao>1){
+				if(selecao>1){ //se mais de um contato for adicionado
 					btnSelecao.setText("Iniciar conversa");
+                                        btnMensagemMultipla.setVisible(true);
+                                        txtMensagemMultipla.setVisible(true);
 				}
 				else{
-			        btnSelecao.setText("Selecionar Todos");
+                                    btnSelecao.setText("Selecionar Todos");
+                                    btnMensagemMultipla.setVisible(false);
+                                    txtMensagemMultipla.setVisible(false);
 			    }
 			}        	
         });
         this.lbNick.setText(this.lbNick.getText()+nome.toUpperCase()+" :)");
+        //bloqueando o resinzing do form
+        setResizable(false);
     }
     
     @SuppressWarnings("unchecked")
@@ -55,8 +64,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btnSelecao = new javax.swing.JButton();
         lbNick1 = new javax.swing.JLabel();
         lstContatos = new javax.swing.JList();
+        btnMensagemMultipla = new javax.swing.JButton();
+        txtMensagemMultipla = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         lbNick.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbNick.setText("OLÁ, ");
@@ -86,27 +102,43 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         lstContatos.setSelectionBackground(new java.awt.Color(255, 102, 102));
 
+        btnMensagemMultipla.setBackground(new java.awt.Color(255, 255, 255));
+        btnMensagemMultipla.setText("Enviar");
+        btnMensagemMultipla.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMensagemMultiplaActionPerformed(evt);
+            }
+        });
+
+        txtMensagemMultipla.setText("Enviar mensagem múltipla...");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(lstContatos, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lbNick, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLogoff, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 85, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addComponent(lbNick1)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSelecao, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnSelecao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lstContatos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(lbNick, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtMensagemMultipla)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLogoff, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnMensagemMultipla, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,8 +153,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSelecao, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbNick1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lstContatos, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnMensagemMultipla)
+                    .addComponent(txtMensagemMultipla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -134,7 +170,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
      * @param evt Poss�vel evento que recebo por par�metro.
      */
     private void btnLogoffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoffActionPerformed
-        System.exit(0);
+        this.confirmacaoSaida();
     }//GEN-LAST:event_btnLogoffActionPerformed
 
     /**
@@ -145,17 +181,32 @@ public class TelaPrincipal extends javax.swing.JFrame {
         if(selecao<=1)
     		lstContatos.setSelectionInterval(0, lstContatos.getModel().getSize()-1);
     	else{    		
-    		this.iniciaChatMultiplo();
+    		this.iniciaChatMultiplo(null);
     	}
     }//GEN-LAST:event_btnSelecaoActionPerformed
 
+    /**
+     * Evento do fechamento do formulário. 
+     * @param evt 
+     *      Evento
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        this.confirmacaoSaida();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void btnMensagemMultiplaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMensagemMultiplaActionPerformed
+        this.iniciaChatMultiplo(this.txtMensagemMultipla.getText());
+    }//GEN-LAST:event_btnMensagemMultiplaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogoff;
+    private javax.swing.JButton btnMensagemMultipla;
     private javax.swing.JButton btnSelecao;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbNick;
     private javax.swing.JLabel lbNick1;
     private javax.swing.JList lstContatos;
+    private javax.swing.JTextField txtMensagemMultipla;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -173,10 +224,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
             	  	String nomeContato = retornaContatoList(indexContato);	         
                         String contato[] = new String[]{nomeContato};
                         if(conversationWindow==null){//se eu não tiver criado a janela ainda
-                            conversationWindow = new ConversationWindow(1, contato);
+                            conversationWindow = new ConversationWindow(1, contato, null);
                          }
                         else{
-                            conversationWindow.adicionaConversa(1, contato);
+                            conversationWindow.adicionaConversa(1, contato, null);
                         }
                     conversationWindow.setVisible(true);
               }
@@ -200,7 +251,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
      * @param quantidadeContatos Quantidade de contatos que selecionei.
      * @return MouseAdapter Um evento de mouse
      */
-    protected void iniciaChatMultiplo(){
+    protected void iniciaChatMultiplo(String mensagem){
     	//Indices dos contatos
         int[] indices = lstContatos.getSelectedIndices();
         //Vetor com nomes dos contatos
@@ -212,10 +263,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
             
         }   
         if(conversationWindow==null){//se eu não tiver criado a janela ainda
-            conversationWindow = new ConversationWindow(indices.length, nomeContatos);
+            conversationWindow = new ConversationWindow(indices.length, nomeContatos, mensagem);
         }
         else{
-            conversationWindow.adicionaConversa(indices.length, nomeContatos);
+            conversationWindow.adicionaConversa(indices.length, nomeContatos, mensagem);
         }
         conversationWindow.setVisible(true);
         //depois de executar a funcionalidade, "zero" a quantidade de elementos selecionados
@@ -265,6 +316,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */ 
     protected void inicializa(){
         this.contatosModel=new DefaultListModel();
+    }
+    
+    /**
+     * Confirma a saída do formulário ou não.
+     */
+    protected void confirmacaoSaida(){
+        //Verificando com um JOptionPane a saída ou não do formulário
+        int sair = JOptionPane.showConfirmDialog(null, "Já vai? Deseja realmente sair do chat?", 
+                    "Fique um pouco mais! :)", JOptionPane.YES_NO_OPTION);
+        if(sair==0){ //se desejar sair
+            JOptionPane.showMessageDialog(null, "Até a próxima! :)");
+            System.exit(0);
+        }
     }
     
     //TODO: os metodos de adicionar e remover devem ser setados, com o tempo, para receberem o ip do contato

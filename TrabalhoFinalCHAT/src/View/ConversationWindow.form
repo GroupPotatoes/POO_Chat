@@ -8,6 +8,9 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -31,12 +34,12 @@
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Component id="txtMsg" min="-2" pref="288" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnEnviar" pref="103" max="32767" attributes="0"/>
+                      <Component id="btnEnviar" pref="106" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="btnAdicionarConversa" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblTitulo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="btnDesconectar" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnFecharConversa" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -48,8 +51,8 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="btnAdicionarConversa" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnDesconectar" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnFecharConversa" min="-2" pref="21" max="-2" attributes="0"/>
+                  <Component id="lblTitulo" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="tbpConversas" min="-2" pref="257" max="-2" attributes="0"/>
@@ -78,20 +81,20 @@
         <Property name="text" type="java.lang.String" value="Enviar"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnAdicionarConversa">
+    <Component class="javax.swing.JButton" name="btnFecharConversa">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Adicionar Conversa"/>
+        <Property name="text" type="java.lang.String" value="Fechar Conversa"/>
         <Property name="focusable" type="boolean" value="false"/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="verticalTextPosition" type="int" value="3"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFecharConversaActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnDesconectar">
+    <Component class="javax.swing.JLabel" name="lblTitulo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Desconectar"/>
-        <Property name="focusable" type="boolean" value="false"/>
-        <Property name="horizontalTextPosition" type="int" value="0"/>
-        <Property name="verticalTextPosition" type="int" value="3"/>
+        <Property name="text" type="java.lang.String" value=":: Tela de Conversas ::"/>
       </Properties>
     </Component>
   </SubComponents>
