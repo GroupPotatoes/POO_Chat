@@ -14,19 +14,64 @@ import java.util.Scanner;
  *
  * @author amanda
  */
-public class ChatClient {
-    public static void main(String args[]) throws UnknownHostException, IOException {
-        Socket client = new Socket("127.0.0.1", 5000);
-        System.out.println("Client connected to server.");
-        
-        Scanner keyboard = new Scanner(System.in);
-        PrintStream output = new PrintStream(client.getOutputStream());
-        
-        while(keyboard.hasNextLine()) {
-            output.println(keyboard.nextLine());    
+public abstract class ChatClient implements Runnable {
+    protected String            nick;
+    protected Socket            client;
+    protected PrintWriter       mandador;
+    protected BufferedReader    receptor;
+    protected ChatHandler       handler;
+    
+    private DataOutputStream dout;
+    private DataInputStream din;
+    
+    public ChatClient (String host, int PORT) {
+        try {
+
+            client = new Socket(host, PORT);
+
+            System.out.println("connected to " + client );
+
+            din = new DataInputStream(client.getInputStream());
+            dout = new DataOutputStream(client.getOutputStream());
+
+            new Thread(this).start();
+            } catch(IOException ie) { 
+                System.out.println(ie); 
+            }
         }
-        
-        output.close();
-        keyboard.close();
     }
+    
+    private void processMessage(String message) {
+        try {
+            dout.writeUTF(message);
+            tf.setText("");
+        } catch(IOException ie) { 
+            System.out.println(ie); 
+        }
+    }
+
+    public static void main(String args[]) throws UnknownHostException, IOException {
+//        Socket client = new Socket("127.0.0.1", ChatServer.PORT);
+//        System.out.println("Client connected to server.");
+//        
+//        Scanner keyboard = new Scanner(System.in);
+//        PrintStream output = new PrintStream(client.getOutputStream());
+//        
+//        while(keyboard.hasNextLine()) {
+//            output.println(keyboard.nextLine());    
+//        }
+//        
+//        output.close();
+//        keyboard.close();
+        try {
+            while (true) {
+                String message = din.readUTF();
+            //panel to print message to:
+                ta.append(message + "\n");
+            }
+        } catch( IOException ie ) { 
+            System.out.println( ie ); 
+        }
+    }
+    
 }
