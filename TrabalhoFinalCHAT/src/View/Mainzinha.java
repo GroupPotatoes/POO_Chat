@@ -11,8 +11,6 @@ public class Mainzinha {
      * @param args the command line arguments
      */
     public static void main(String args[]) {        
-        TelaPrincipal t;
-    	t = new View.TelaPrincipal("Manda");
-        t.setVisible(true);
+        new LoginScreen().setVisible(true);
     }
 }

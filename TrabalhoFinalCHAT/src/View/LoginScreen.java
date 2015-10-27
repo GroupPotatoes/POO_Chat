@@ -1,5 +1,6 @@
 package View;
 
+import Module.Andre.Usuario;
 import View.TelaPrincipal;
 import java.awt.Color;
 
@@ -9,6 +10,9 @@ import java.awt.Color;
  */
 public class LoginScreen extends javax.swing.JFrame {
 
+    protected Usuario user;
+    protected String nick;
+    
     /**
      * Construtor da classe.
      */
@@ -18,7 +22,6 @@ public class LoginScreen extends javax.swing.JFrame {
         //bloqueando o resinzing do form
         setResizable(false);
     }
-
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -93,16 +96,18 @@ public class LoginScreen extends javax.swing.JFrame {
         else{    
             this.lblTitulo.setText(":)");
             this.lblTitulo.setForeground(Color.black);
-            new TelaPrincipal(this.txtLogin.getText()).setVisible(true);
+            this.nick = this.txtLogin.getText();
+            new TelaPrincipal(nick).setVisible(true);
             this.dispose();
         }
     }//GEN-LAST:event_btnLogarActionPerformed
-
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogar;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txtLogin;
     // End of variables declaration//GEN-END:variables
+
+    
 }

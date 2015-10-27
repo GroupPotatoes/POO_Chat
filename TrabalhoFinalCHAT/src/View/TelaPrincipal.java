@@ -1,5 +1,7 @@
 package View;
 
+import Module.Andre.Usuario;
+//import Module.Andre.;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,6 +19,9 @@ import javax.swing.event.ListSelectionListener;
  */
 public class TelaPrincipal extends javax.swing.JFrame { 
 	
+//    private TratadorDeUsuario tratador;
+    private Usuario usuario;
+    private String nick;
     private int selecao=0; //quantidade de contatos selecionados
     private ConversationWindow conversationWindow;
     private DefaultListModel contatosModel; //Lista de contatos que terei no meu JList
@@ -49,9 +54,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
 			    }
 			}        	
         });
-        this.lbNick.setText(this.lbNick.getText()+nome.toUpperCase()+" :)");
+        this.nick=this.lbNick.getText()+nome.toUpperCase();
+        this.lbNick.setText(nick+" :)");
         //bloqueando o resinzing do form
         setResizable(false);
+        //Executando a Thread
+        
+        //Criando o usuário
+        this.usuario = new Usuario(this.nick, null, null, null, null);
     }
     
     @SuppressWarnings("unchecked")
@@ -95,11 +105,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         lbNick1.setText("LISTA DE CONTATOS");
 
-        lstContatos.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Contato1", "Contato2", "Contato3", "Contato4", "Contato5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         lstContatos.setSelectionBackground(new java.awt.Color(255, 102, 102));
 
         btnMensagemMultipla.setBackground(new java.awt.Color(255, 255, 255));
@@ -331,5 +336,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }
     
+    public void novaConversa(String remetente, String mensagem)
+    {
+        
+    }
     //TODO: os metodos de adicionar e remover devem ser setados, com o tempo, para receberem o ip do contato
+
+    /*TODO: socket, printWriter e BufferedReader
+            PrintWriter - passo o nick --> println, fflush --> p/ mandar
+            
+      */      
+    //TODO: chamar server  AQUI
+    
 }
