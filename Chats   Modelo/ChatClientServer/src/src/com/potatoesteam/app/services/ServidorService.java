@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Servidor.src.com.mballem.app.service;
+package src.com.potatoesteam.app.services;
 
-import Servidor.src.com.mballem.app.bean.ChatMessage;
-import Servidor.src.com.mballem.app.bean.ChatMessage.Action;
+import src.com.potatoesteam.app.beans.ServidorChatMessage;
+import src.com.potatoesteam.app.beans.ServidorChatMessage.Action;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -23,18 +19,21 @@ import java.util.logging.Logger;
 import sun.awt.windows.ThemeReader;
 
 /**
- * @author Marcio Ballem
+ * Classe que provém o serviço para o Servidor.
+ * @author Bianca Pereira
  */
 public class ServidorService {
 
     private ServerSocket serverSocket;
     private Socket socket;
-    private Map<String, ObjectOutputStream> mapOnlines = new HashMap<String, ObjectOutputStream>();
+    private Map<String, ObjectOutputStream> mapOnlineUsers = new HashMap<String, ObjectOutputStream>();
 
     public ServidorService() {
         try {
-            serverSocket = new ServerSocket(5555);
+            serverSocket = new ServerSocket(12345);
 
+            serverSocket.setSoTimeout(0);
+            
             System.out.println("Servidor on!");
 
             while (true) {
@@ -64,20 +63,20 @@ public class ServidorService {
 
         @Override
         public void run() {
-            ChatMessage message = null;
+            ServidorChatMessage message = null;
             try {
-                while ((message = (ChatMessage) input.readObject()) != null) {
+                while ((message = (ServidorChatMessage) input.readObject()) != null) {
                     Action action = message.getAction();
 
                     if (action.equals(Action.CONNECT)) {
                         boolean isConnect = connect(message, output);
                         if (isConnect) {
-                            mapOnlines.put(message.getName(), output);
-                            sendOnlines();
+                            mapOnlineUsers.put(message.getName(), output);
+                            sendOnlineUsers();
                         }
                     } else if (action.equals(Action.DISCONNECT)) {
                         disconnect(message, output);
-                        sendOnlines();
+                        sendOnlineUsers();
                         return;
                     } else if (action.equals(Action.SEND_ONE)) {
                         sendOne(message);
@@ -86,10 +85,10 @@ public class ServidorService {
                     }
                 }
             } catch (IOException ex) {
-                ChatMessage cm = new ChatMessage();
+                ServidorChatMessage cm = new ServidorChatMessage();
                 cm.setName(message.getName());
                 disconnect(cm, output);
-                sendOnlines();
+                sendOnlineUsers();
                 System.out.println(message.getName() + " deixou o chat!");
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ServidorService.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,14 +96,14 @@ public class ServidorService {
         }
     }
 
-    private boolean connect(ChatMessage message, ObjectOutputStream output) {
-        if (mapOnlines.size() == 0) {
+    private boolean connect(ServidorChatMessage message, ObjectOutputStream output) {
+        if (mapOnlineUsers.size() == 0) {
             message.setText("YES");
             send(message, output);
             return true;
         }
 
-        if (mapOnlines.containsKey(message.getName())) {
+        if (mapOnlineUsers.containsKey(message.getName())) {
             message.setText("NO");
             send(message, output);
             return false;
@@ -115,8 +114,8 @@ public class ServidorService {
         }
     }
 
-    private void disconnect(ChatMessage message, ObjectOutputStream output) {
-        mapOnlines.remove(message.getName());
+    private void disconnect(ServidorChatMessage message, ObjectOutputStream output) {
+        mapOnlineUsers.remove(message.getName());
 
         message.setText(" até logo!");
 
@@ -127,7 +126,7 @@ public class ServidorService {
         System.out.println("User " + message.getName() + " sai da sala");
     }
 
-    private void send(ChatMessage message, ObjectOutputStream output) {
+    private void send(ServidorChatMessage message, ObjectOutputStream output) {
         try {
             output.writeObject(message);
         } catch (IOException ex) {
@@ -135,8 +134,8 @@ public class ServidorService {
         }
     }
 
-    private void sendOne(ChatMessage message) {
-        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlines.entrySet()) {
+    private void sendOne(ServidorChatMessage message) {
+        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlineUsers.entrySet()) {
             if (kv.getKey().equals(message.getNameReserved())) {
                 try {
                     kv.getValue().writeObject(message);
@@ -147,8 +146,8 @@ public class ServidorService {
         }
     }
 
-    private void sendAll(ChatMessage message) {
-        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlines.entrySet()) {
+    private void sendAll(ServidorChatMessage message) {
+        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlineUsers.entrySet()) {
             if (!kv.getKey().equals(message.getName())) {
                 message.setAction(Action.SEND_ONE);
                 try {
@@ -160,17 +159,17 @@ public class ServidorService {
         }
     }
 
-    private void sendOnlines() {
+    private void sendOnlineUsers() {
         Set<String> setNames = new HashSet<String>();
-        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlines.entrySet()) {
+        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlineUsers.entrySet()) {
             setNames.add(kv.getKey());
         }
 
-        ChatMessage message = new ChatMessage();
+        ServidorChatMessage message = new ServidorChatMessage();
         message.setAction(Action.USERS_ONLINE);
-        message.setSetOnlines(setNames);
+        message.setSetOnlineUsers(setNames);
 
-        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlines.entrySet()) {
+        for (Map.Entry<String, ObjectOutputStream> kv : mapOnlineUsers.entrySet()) {
             message.setName(kv.getKey());
             try {
                 kv.getValue().writeObject(message);

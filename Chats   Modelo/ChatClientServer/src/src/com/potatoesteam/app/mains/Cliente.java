@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Cliente.src.com.mballem.app;
+package src.com.potatoesteam.app.mains;
 
-import Cliente.src.com.mballem.app.frame.ClienteFrame;
+import src.com.potatoesteam.app.frame.ClienteFrame;
 
 /**
- *
- * @author Marcio Ballem
+ * Classe que contém a main para o cliente.
+ * @author Amanda Braz
  */
 public class Cliente {
 

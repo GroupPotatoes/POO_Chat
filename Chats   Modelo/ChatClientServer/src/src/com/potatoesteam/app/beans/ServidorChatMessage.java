@@ -1,23 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Cliente.src.com.mballem.app.bean;
+package src.com.potatoesteam.app.beans;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
- * @author Marcio Ballem
+ * Bean que configura o servidor no chat.
+ * @author Amanda Braz
  */
-public class ChatMessage implements Serializable {
+public class ServidorChatMessage implements Serializable {
     
     private String name;
     private String text;
     private String nameReserved;
-    private Set<String> setOnlines = new HashSet<String>();
+    private Set<String> setOnlineUsers = new HashSet<String>();
     private Action action;
 
     public String getName() {
@@ -44,12 +40,12 @@ public class ChatMessage implements Serializable {
         this.nameReserved = nameReserved;
     }
 
-    public Set<String> getSetOnlines() {
-        return setOnlines;
+    public Set<String> getSetOnlineUsers() {
+        return setOnlineUsers;
     }
 
-    public void setSetOnlines(Set<String> setOnlines) {
-        this.setOnlines = setOnlines;
+    public void setSetOnlineUsers(Set<String> setOnlineUsers) {
+        this.setOnlineUsers = setOnlineUsers;
     }
 
     public Action getAction() {

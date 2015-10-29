@@ -1,10 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Cliente.src.com.mballem.app.service;
+package src.com.potatoesteam.app.services;
 
-import Servidor.src.com.mballem.app.bean.ChatMessage;
+import src.com.potatoesteam.app.beans.ServidorChatMessage;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -13,8 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Marcio Ballem
+ * Classe que provém o serviço para o cliente.
+ * @author Maiara Rodrigues
  */
 public class ClienteService {
     
@@ -23,7 +19,7 @@ public class ClienteService {
     
     public Socket connect() {
         try {
-            this.socket = new Socket("localhost", 5555);
+            this.socket = new Socket("192.168.1.105", 12345);
             this.output = new ObjectOutputStream(socket.getOutputStream());
         } catch (UnknownHostException ex) {
             Logger.getLogger(ClienteService.class.getName()).log(Level.SEVERE, null, ex);
@@ -34,7 +30,7 @@ public class ClienteService {
         return socket;
     }
     
-    public void send(ChatMessage message) {
+    public void send(ServidorChatMessage message) {
         try {
             output.writeObject(message);
         } catch (IOException ex) {

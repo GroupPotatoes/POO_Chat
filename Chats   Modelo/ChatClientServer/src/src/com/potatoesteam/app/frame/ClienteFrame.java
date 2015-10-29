@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Cliente.src.com.mballem.app.frame;
+package src.com.potatoesteam.app.frame;
 
-import Servidor.src.com.mballem.app.bean.ChatMessage;
-import Servidor.src.com.mballem.app.bean.ChatMessage.Action;
-import Cliente.src.com.mballem.app.service.ClienteService;
+import src.com.potatoesteam.app.beans.ServidorChatMessage;
+import src.com.potatoesteam.app.beans.ServidorChatMessage.Action;
+import src.com.potatoesteam.app.services.ClienteService;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -18,13 +14,13 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
- *
- * @author Marcio Ballem
+ * Classe que possui o frame inicial exibido aos clientes.
+ * @author Maiara Rodrigues
  */
 public class ClienteFrame extends javax.swing.JFrame {
 
     private Socket socket;
-    private ChatMessage message;
+    private ServidorChatMessage message;
     private ClienteService service;
 
     /**
@@ -48,9 +44,9 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         @Override
         public void run() {
-            ChatMessage message = null;
+            ServidorChatMessage message = null;
             try {
-                while ((message = (ChatMessage) input.readObject()) != null) {
+                while ((message = (ServidorChatMessage) input.readObject()) != null) {
                     Action action = message.getAction();
 
                     if (action.equals(Action.CONNECT)) {
@@ -62,7 +58,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                         System.out.println("::: " + message.getText() + " :::");
                         receive(message);
                     } else if (action.equals(Action.USERS_ONLINE)) {
-                        refreshOnlines(message);
+                        refreshOnlineUsers(message);
                     }
                 }
             } catch (IOException ex) {
@@ -73,7 +69,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         }
     }
 
-    private void connected(ChatMessage message) {
+    private void connected(ServidorChatMessage message) {
         if (message.getText().equals("NO")) {
             this.txtName.setText("");
             JOptionPane.showMessageDialog(this, "Conexão não realizada!\nTente novamente com um novo nome.");
@@ -110,14 +106,14 @@ public class ClienteFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Você saiu do chat!");
     }
 
-    private void receive(ChatMessage message) {
+    private void receive(ServidorChatMessage message) {
         this.txtAreaReceive.append(message.getName() + " diz: " + message.getText() + "\n");
     }
 
-    private void refreshOnlines(ChatMessage message) {
-        System.out.println(message.getSetOnlines().toString());
+    private void refreshOnlineUsers(ServidorChatMessage message) {
+        System.out.println(message.getSetOnlineUsers().toString());
         
-        Set<String> names = message.getSetOnlines();
+        Set<String> names = message.getSetOnlineUsers();
         
         names.remove(message.getName());
         
@@ -152,7 +148,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         btnEnviar = new javax.swing.JButton();
         btnLimpar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Conectar"));
 
@@ -294,6 +290,8 @@ public class ClienteFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel2.getAccessibleContext().setAccessibleName("Users Online");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -301,7 +299,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         String name = this.txtName.getText();
 
         if (!name.isEmpty()) {
-            this.message = new ChatMessage();
+            this.message = new ServidorChatMessage();
             this.message.setAction(Action.CONNECT);
             this.message.setName(name);
 
@@ -315,7 +313,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConnectarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-        ChatMessage message = new ChatMessage();
+        ServidorChatMessage message = new ServidorChatMessage();
         message.setName(this.message.getName());
         message.setAction(Action.DISCONNECT);
         this.service.send(message);
@@ -330,7 +328,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         String text = this.txtAreaSend.getText();
         String name = this.message.getName();
         
-        this.message = new ChatMessage();
+        this.message = new ServidorChatMessage();
         
         if (this.listOnlines.getSelectedIndex() > -1) {
             this.message.setNameReserved((String) this.listOnlines.getSelectedValue());
